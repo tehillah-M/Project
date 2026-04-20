@@ -1,0 +1,38 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+function Home() {
+  const [slots, setSlots] = useState([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/slots")
+      .then(res => setSlots(res.data));
+  }, []);
+
+  const bookSlot = async (id) => {
+    await axios.post("http://localhost:5000/api/bookings", {
+      userName: "User",
+      slotId: id
+    });
+    window.location.reload();
+  };
+
+  return (
+    <div>
+      <h2>Available Slots</h2>
+      {slots.map(slot => (
+        <div key={slot._id}>
+          {slot.sport} - {slot.time}
+          <button 
+            disabled={slot.isBooked}
+            onClick={() => bookSlot(slot._id)}
+          >
+            {slot.isBooked ? "Booked" : "Book"}
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default Home;
